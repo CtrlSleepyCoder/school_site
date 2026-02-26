@@ -1,4 +1,4 @@
-# templates.py
+
 def layout(content):
     return f"""
 <!DOCTYPE html>
@@ -17,8 +17,8 @@ nav a:hover {{ text-decoration: underline;}}
 input, select, button {{ width: 100%; padding: 8px; margin: 6px 0 12px 0; border-radius: 5px; border: 1px solid #ccc;}}
 button {{ background: #4CAF50; color: white; border: none; cursor: pointer; font-weight: bold;}}
 button:hover {{ background: #45a049;}}
-table {{ width: 100%; border-collapse: collapse;}}
-th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd;}}
+table {{ width: 100%; border-collapse: collapse; margin-top: 10px;}}
+th, td {{ padding: 8px; text-align: left; border: 1px solid #ddd;}}
 th {{ background: #f2f2f2;}}
 </style>
 </head>
@@ -33,6 +33,7 @@ th {{ background: #f2f2f2;}}
 <a href="/add_schedule">Розклад</a>
 <a href="/add_grade">Оцінки</a>
 <a href="/view">Перегляд даних</a>
+<a href="/schedule_class">Розклад класу</a>
 </nav>
 <div class="container">
 {content}

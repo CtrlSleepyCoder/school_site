@@ -177,6 +177,50 @@ def view_data():
     return render_template_string(layout(content))
 
 # -----------------------------
+# Розклад класу на тиждень
+# -----------------------------
+@app.route("/schedule_class", methods=["GET","POST"])
+def schedule_class():
+    table_html = ""
+    selected_class_id = None
+    
+    if request.method == "POST":
+        selected_class_id = int(request.form["class"])
+        class_schedule = [r for r in data.schedules if r["class_id"] == selected_class_id]
+        days = ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця"]
+        times = sorted(list(set(r["time"] for r in class_schedule)))
+        table_html += "<table><tr><th>Час</th>"
+        for d in days:
+            table_html += f"<th>{d}</th>"
+        table_html += "</tr>"
+        for t in times:
+            table_html += f"<tr><td>{t}</td>"
+            for d in days:
+                cell = [r for r in class_schedule if r["day"]==d and r["time"]==t]
+                if cell:
+                    r = cell[0]
+                    subject_name = data.subjects[r["subject_id"]-1]["name"]
+                    teacher_name = r["teacher_username"]
+                    table_html += f"<td>{subject_name}<br><small>{teacher_name}</small></td>"
+                else:
+                    table_html += "<td></td>"
+            table_html += "</tr>"
+        table_html += "</table>"
+
+    options = "".join([f"<option value='{c['id']}' {'selected' if selected_class_id==c['id'] else ''}>{c['name']}</option>" for c in data.classes])
+    content = f"""
+    <div class='card'>
+    <h2>Розклад класу</h2>
+    <form method='post'>
+        Виберіть клас: <select name='class'>{options}</select><br>
+        <button>Показати розклад</button>
+    </form>
+    {table_html}
+    </div>
+    """
+    return render_template_string(layout(content))
+
+# -----------------------------
 # Запуск сервера
 # -----------------------------
 if __name__ == "__main__":
