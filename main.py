@@ -10,31 +10,47 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     content = "<div class='card'><h2>Ласкаво просимо!</h2><p>Виберіть опцію з меню зверху.</p></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Додати предмет
 # -----------------------------
-@app.route("/add_subject", methods=["GET","POST"])
+@app.route("/add_subject", methods=["GET", "POST"])
 def add_subject():
-    if request.method=="POST":
+    if request.method == "POST":
         name = request.form["name"]
         data.subjects.append({"id": len(data.subjects)+1, "name": name})
         return redirect("/add_subject")
-    content = "<div class='card'><h2>Додати предмет</h2><form method='post'>Назва: <input name='name'><button>Додати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = """
+    <div class='card'>
+    <h2>Додати предмет</h2>
+    <form method='post'>
+        Назва: <input name='name' required><br>
+        <button>Додати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Додати клас
 # -----------------------------
-@app.route("/add_class", methods=["GET","POST"])
+@app.route("/add_class", methods=["GET", "POST"])
 def add_class():
-    if request.method=="POST":
+    if request.method == "POST":
         name = request.form["name"]
         data.classes.append({"id": len(data.classes)+1, "name": name})
         return redirect("/add_class")
-    content = "<div class='card'><h2>Додати клас</h2><form method='post'>Назва: <input name='name'><button>Додати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = """
+    <div class='card'>
+    <h2>Додати клас</h2>
+    <form method='post'>
+        Назва: <input name='name' required><br>
+        <button>Додати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Реєстрація вчителя
@@ -49,8 +65,18 @@ def register_teacher():
         data.teachers.append({"username":username,"subject_id":subject_id})
         return redirect("/register_teacher")
     options = "".join([f"<option value='{s['id']}'>{s['name']}</option>" for s in data.subjects])
-    content = f"<div class='card'><h2>Реєстрація вчителя</h2><form method='post'>Ім'я: <input name='username'>Пароль: <input type='password' name='password'>Предмет: <select name='subject'>{options}</select><button>Зареєструвати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = f"""
+    <div class='card'>
+    <h2>Реєстрація вчителя</h2>
+    <form method='post'>
+        Ім'я: <input name='username' required><br>
+        Пароль: <input type='password' name='password' required><br>
+        Предмет: <select name='subject'>{options}</select><br>
+        <button>Зареєструвати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Реєстрація учня
@@ -65,8 +91,18 @@ def register_student():
         data.students.append({"username":username,"class_id":class_id})
         return redirect("/register_student")
     options = "".join([f"<option value='{c['id']}'>{c['name']}</option>" for c in data.classes])
-    content = f"<div class='card'><h2>Реєстрація учня</h2><form method='post'>Ім'я: <input name='username'>Пароль: <input type='password' name='password'>Клас: <select name='class'>{options}</select><button>Зареєструвати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = f"""
+    <div class='card'>
+    <h2>Реєстрація учня</h2>
+    <form method='post'>
+        Ім'я: <input name='username' required><br>
+        Пароль: <input type='password' name='password' required><br>
+        Клас: <select name='class'>{options}</select><br>
+        <button>Зареєструвати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Додати розклад
@@ -84,8 +120,20 @@ def add_schedule():
     subject_options = "".join([f"<option value='{s['id']}'>{s['name']}</option>" for s in data.subjects])
     teacher_options = "".join([f"<option value='{t['username']}'>{t['username']}</option>" for t in data.teachers])
     class_options = "".join([f"<option value='{c['id']}'>{c['name']}</option>" for c in data.classes])
-    content = f"<div class='card'><h2>Додати розклад</h2><form method='post'>Предмет: <select name='subject'>{subject_options}</select>Вчитель: <select name='teacher'>{teacher_options}</select>Клас: <select name='class'>{class_options}</select>День: <input name='day'>Час: <input name='time'><button>Додати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = f"""
+    <div class='card'>
+    <h2>Додати розклад</h2>
+    <form method='post'>
+        Предмет: <select name='subject'>{subject_options}</select><br>
+        Вчитель: <select name='teacher'>{teacher_options}</select><br>
+        Клас: <select name='class'>{class_options}</select><br>
+        День: <input name='day' required><br>
+        Час: <input name='time' required><br>
+        <button>Додати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Додати оцінку
@@ -100,8 +148,18 @@ def add_grade():
         return redirect("/add_grade")
     student_options = "".join([f"<option value='{s['username']}'>{s['username']}</option>" for s in data.students])
     subject_options = "".join([f"<option value='{s['id']}'>{s['name']}</option>" for s in data.subjects])
-    content = f"<div class='card'><h2>Додати оцінку</h2><form method='post'>Учень: <select name='student'>{student_options}</select>Предмет: <select name='subject'>{subject_options}</select>Оцінка: <input name='grade'><button>Додати</button></form></div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    content = f"""
+    <div class='card'>
+    <h2>Додати оцінку</h2>
+    <form method='post'>
+        Учень: <select name='student'>{student_options}</select><br>
+        Предмет: <select name='subject'>{subject_options}</select><br>
+        Оцінка: <input name='grade' required><br>
+        <button>Додати</button>
+    </form>
+    </div>
+    """
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Перегляд даних
@@ -116,7 +174,7 @@ def view_data():
     content += "<h3>Розклад:</h3><ul>" + "".join([f"<li>{data.subjects[r['subject_id']-1]['name']} | {r['teacher_username']} | {data.classes[r['class_id']-1]['name']} | {r['day']} {r['time']}</li>" for r in data.schedules]) + "</ul>"
     content += "<h3>Оцінки:</h3><ul>" + "".join([f"<li>{g['student_username']} | {data.subjects[g['subject_id']-1]['name']} | {g['grade']}</li>" for g in data.grades]) + "</ul>"
     content += "</div>"
-    return render_template_string(layout.replace("{{ content }}", content))
+    return render_template_string(layout(content))
 
 # -----------------------------
 # Запуск сервера
